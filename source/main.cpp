@@ -21,9 +21,46 @@ void setLED(LED led, bool on)
     }
 }
 
+enum Line
+{
+    LEFTSensor = 1,
+    RIGHTSensor = 2,
+};
+
+int readLine(Line line)
+{
+    if (line == Line::LEFTSensor)
+    {
+        return uBit.io.P13.getDigitalValue();
+    }
+    else if (line == Line::RIGHTSensor)
+    {
+        return uBit.io.P14.getDigitalValue();
+    }
+    return -1;
+}
+
 int main()
 {
     uBit.init();
 
-    setLED(LED::ALL, true);
+    for (;;)
+    {
+        if (readLine(Line::LEFTSensor) == 1)
+        {
+            setLED(LED::LEFT, true);
+        }
+        else
+        {
+            setLED(LED::LEFT, false);
+        }
+        if (readLine(Line::RIGHTSensor) == 1)
+        {
+            setLED(LED::RIGHT, true);
+        }
+        else
+        {
+            setLED(LED::RIGHT, false);
+        }
+    }
 }
