@@ -40,6 +40,10 @@ int readLine(Line line)
     return -1;
 }
 
+void registerLineEvent(Line line) {
+    uBit.io.P13.setPull
+}
+
 int main()
 {
     uBit.init();
