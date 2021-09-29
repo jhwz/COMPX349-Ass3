@@ -2,6 +2,10 @@
 
 MicroBit uBit;
 
+// event handelers
+#define CHANGE_PATH MICROBIT_ID_NOTIFY + 1
+#define CHANGE_PATH_EVT 0
+
 enum LED
 {
     ALL = 0,
@@ -168,7 +172,6 @@ int main()
 {
     uBit.init();
     uBit.io.P13.eventOn(DEVICE_PIN_EVENT_ON_EDGE);
-
     uBit.io.P14.eventOn(DEVICE_PIN_EVENT_ON_EDGE);
 
     uBit.messageBus.listen(uBit.io.P13.id, DEVICE_PIN_EVT_RISE, onLeftLineOn);
