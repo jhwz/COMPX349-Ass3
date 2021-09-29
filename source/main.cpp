@@ -111,6 +111,10 @@ int readLine(Line line)
 }
 >>>>>>> c7b3bd0efd7079ed18a606919c54359f66842f9b
 
+void registerLineEvent(Line line) {
+    uBit.io.P13.setPull
+}
+
 int main()
 {
     uBit.init();
