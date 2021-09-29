@@ -2,6 +2,10 @@
 
 MicroBit uBit;
 
+//event handelers
+#define CHANGE_PATH MICROBIT_ID_NOTIFY +1
+#define CHANGE_PATH_EVT 0
+
 enum LED
 {
     ALL = 0,
@@ -116,9 +120,12 @@ int main()
     buf[0] = 0x00;//motor selection x02 right x00 left
     buf[1] = 0x00;//motor direction 0 forward,  1 backward
     buf[2] = 0x00;//motor speed
-    //uBit.i2c.write( 0x20, buf, 3);    // device address is 0x10 but must be left shifted for Micro:bit libraries.
-    //buf[0] = 0x02;
-    //ret = uBit.i2c.write( 0x20, buf, 3); 
+    
+    //listen for event to update direction
+    //uBit.messageBus.listen(CHANGE_PATH, CHANGE_PATH_EVT, changePathFunction);
+    //to trigger event
+    //MicroBitEvent evt1(CHANGE_PATH, CHANGE_PATH_EVT);
+    
     while(1){
     	forward();
     	uBit.sleep(2000);
@@ -129,7 +136,6 @@ int main()
     	left();
     	uBit.sleep(2000);
     }
-    uBit.display.scroll(ret);
 =======
     setLED(LED::ALL, true);
 >>>>>>> 8d4910d7183c8d9207eacf91e403f95b71f92517
