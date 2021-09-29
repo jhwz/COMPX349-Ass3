@@ -2,8 +2,8 @@
 
 MicroBit uBit;
 
-//event handelers
-#define CHANGE_PATH MICROBIT_ID_NOTIFY +1
+// event handelers
+#define CHANGE_PATH MICROBIT_ID_NOTIFY + 1
 #define CHANGE_PATH_EVT 0
 
 enum LED
@@ -25,94 +25,155 @@ void setLED(LED led, bool on)
     }
 }
 
-int  ret;  
+int ret;
 
-void displayStatus(char i){
+void displayStatus(char i)
+{
     uBit.display.image.clear();
-    if (i == 'f'){
-        uBit.display.image.setPixelValue(0,2,255);uBit.display.image.setPixelValue(1,1,255);
-        uBit.display.image.setPixelValue(2,0,255);uBit.display.image.setPixelValue(3,1,255);
-        uBit.display.image.setPixelValue(4,2,255);uBit.display.image.setPixelValue(2,1,255);
-        uBit.display.image.setPixelValue(2,2,255);uBit.display.image.setPixelValue(2,3,255);
+    if (i == 'f')
+    {
+        uBit.display.image.setPixelValue(0, 2, 255);
+        uBit.display.image.setPixelValue(1, 1, 255);
+        uBit.display.image.setPixelValue(2, 0, 255);
+        uBit.display.image.setPixelValue(3, 1, 255);
+        uBit.display.image.setPixelValue(4, 2, 255);
+        uBit.display.image.setPixelValue(2, 1, 255);
+        uBit.display.image.setPixelValue(2, 2, 255);
+        uBit.display.image.setPixelValue(2, 3, 255);
     }
-    else if (i == 'b'){
-        uBit.display.image.setPixelValue(0,2,255);uBit.display.image.setPixelValue(1,3,255);     
-        uBit.display.image.setPixelValue(2,4,255);uBit.display.image.setPixelValue(3,3,255);        
-        uBit.display.image.setPixelValue(4,2,255);uBit.display.image.setPixelValue(2,1,255);
-        uBit.display.image.setPixelValue(2,2,255);uBit.display.image.setPixelValue(2,3,255);
+    else if (i == 'b')
+    {
+        uBit.display.image.setPixelValue(0, 2, 255);
+        uBit.display.image.setPixelValue(1, 3, 255);
+        uBit.display.image.setPixelValue(2, 4, 255);
+        uBit.display.image.setPixelValue(3, 3, 255);
+        uBit.display.image.setPixelValue(4, 2, 255);
+        uBit.display.image.setPixelValue(2, 1, 255);
+        uBit.display.image.setPixelValue(2, 2, 255);
+        uBit.display.image.setPixelValue(2, 3, 255);
     }
-    else if (i == 'l'){
-        uBit.display.image.setPixelValue(2,0,255);uBit.display.image.setPixelValue(3,1,255);
-        uBit.display.image.setPixelValue(4,2,255);uBit.display.image.setPixelValue(3,3,255);
-        uBit.display.image.setPixelValue(2,4,255);uBit.display.image.setPixelValue(1,2,255);
-        uBit.display.image.setPixelValue(2,2,255);uBit.display.image.setPixelValue(3,2,255);
+    else if (i == 'l')
+    {
+        uBit.display.image.setPixelValue(2, 0, 255);
+        uBit.display.image.setPixelValue(3, 1, 255);
+        uBit.display.image.setPixelValue(4, 2, 255);
+        uBit.display.image.setPixelValue(3, 3, 255);
+        uBit.display.image.setPixelValue(2, 4, 255);
+        uBit.display.image.setPixelValue(1, 2, 255);
+        uBit.display.image.setPixelValue(2, 2, 255);
+        uBit.display.image.setPixelValue(3, 2, 255);
     }
-    else if (i == 'r'){
-        uBit.display.image.setPixelValue(2,0,255);uBit.display.image.setPixelValue(1,1,255);
-        uBit.display.image.setPixelValue(0,2,255);uBit.display.image.setPixelValue(1,3,255);
-        uBit.display.image.setPixelValue(2,4,255);uBit.display.image.setPixelValue(1,2,255);
-        uBit.display.image.setPixelValue(2,2,255);uBit.display.image.setPixelValue(3,2,255);
+    else if (i == 'r')
+    {
+        uBit.display.image.setPixelValue(2, 0, 255);
+        uBit.display.image.setPixelValue(1, 1, 255);
+        uBit.display.image.setPixelValue(0, 2, 255);
+        uBit.display.image.setPixelValue(1, 3, 255);
+        uBit.display.image.setPixelValue(2, 4, 255);
+        uBit.display.image.setPixelValue(1, 2, 255);
+        uBit.display.image.setPixelValue(2, 2, 255);
+        uBit.display.image.setPixelValue(3, 2, 255);
     }
 }
 
-//direction functions
-void forward(){
-    uint8_t buf[3];//set both motors to forward
-    buf[0] = 0x00;buf[1] = 0x00;buf[2] = 0x60; uBit.i2c.write( 0x20, buf, 3); 
-    buf[0] = 0x02;buf[1] = 0x00;buf[2] = 0x60; uBit.i2c.write( 0x20, buf, 3); 
+void forward()
+{
+    uint8_t buf[3];
+    buf[0] = 0x00;
+    buf[1] = 0x00;
+    buf[2] = 0x60;
+    uBit.i2c.write(0x20, buf, 3);
+    buf[0] = 0x02;
+    buf[1] = 0x00;
+    buf[2] = 0x60;
+    uBit.i2c.write(0x20, buf, 3);
     displayStatus('f');
 }
-void reverse(){ //set both motors to reverse
-    uint8_t buf[3]; 
-    buf[0] = 0x00;buf[1] = 0x01;buf[2] = 0x60; uBit.i2c.write( 0x20, buf, 3); 
-    buf[0] = 0x02;buf[1] = 0x01;buf[2] = 0x60; uBit.i2c.write( 0x20, buf, 3); 
+void reverse()
+{
+    uint8_t buf[3];
+    buf[0] = 0x00;
+    buf[1] = 0x01;
+    buf[2] = 0x60;
+    uBit.i2c.write(0x20, buf, 3);
+    buf[0] = 0x02;
+    buf[1] = 0x01;
+    buf[2] = 0x60;
+    uBit.i2c.write(0x20, buf, 3);
     displayStatus('b');
 }
-void right(){ //set left motor on, right motor off
-    uint8_t buf[3]; 
-    buf[0] = 0x00;buf[1] = 0x00;buf[2] = 0x40; uBit.i2c.write( 0x20, buf, 3); 
-    buf[0] = 0x02;buf[1] = 0x00;buf[2] = 0x00; uBit.i2c.write( 0x20, buf, 3); 
+void right()
+{
+    uint8_t buf[3];
+    buf[0] = 0x00;
+    buf[1] = 0x00;
+    buf[2] = 0x40;
+    uBit.i2c.write(0x20, buf, 3);
+    buf[0] = 0x02;
+    buf[1] = 0x00;
+    buf[2] = 0x00;
+    uBit.i2c.write(0x20, buf, 3);
     displayStatus('r');
 }
-void left(){ //set right motor on, left motor off
-    uint8_t buf[3]; 
-    buf[0] = 0x00;buf[1] = 0x00;buf[2] = 0x00; uBit.i2c.write( 0x20, buf, 3); 
-    buf[0] = 0x02;buf[1] = 0x00;buf[2] = 0x40; uBit.i2c.write( 0x20, buf, 3); 
+void left()
+{
+    uint8_t buf[3];
+    buf[0] = 0x00;
+    buf[1] = 0x00;
+    buf[2] = 0x00;
+    uBit.i2c.write(0x20, buf, 3);
+    buf[0] = 0x02;
+    buf[1] = 0x00;
+    buf[2] = 0x40;
+    uBit.i2c.write(0x20, buf, 3);
     displayStatus('l');
 }
 
+enum Line
+{
+    LEFTSensor = 1,
+    RIGHTSensor = 2,
+};
 
+int readLine(Line line)
+{
+    if (line == Line::LEFTSensor)
+    {
+        return uBit.io.P13.getDigitalValue();
+    }
+    else if (line == Line::RIGHTSensor)
+    {
+        return uBit.io.P14.getDigitalValue();
+    }
+    return -1;
+}
 
-void registerLineEvent(Line line) {
-    uBit.io.P13.setPull
+void onLeftLineOn(MicroBitEvent evt)
+{
+    setLED(LED::LEFT, true);
+}
+
+void onLeftLineOff(MicroBitEvent evt)
+{
+    setLED(LED::LEFT, false);
+}
+
+void onRightLineOn(MicroBitEvent evt)
+{
+    setLED(LED::RIGHT, true);
+}
+
+void onRightLineOff(MicroBitEvent evt)
+{
+    setLED(LED::RIGHT, false);
 }
 
 int main()
 {
     uBit.init();
+    uBit.io.P13.eventOn(DEVICE_PIN_EVENT_ON_EDGE);
+    uBit.io.P14.eventOn(DEVICE_PIN_EVENT_ON_EDGE);
 
-    uint8_t buf[3]; 
-    buf[0] = 0x00;//motor selection x02 right x00 left
-    buf[1] = 0x00;//motor direction 0 forward,  1 backward
-    buf[2] = 0x00;//motor speed
-    
-    //listen for event to update direction
-    //uBit.messageBus.listen(CHANGE_PATH, CHANGE_PATH_EVT, changePathFunction);
-    //to trigger event
-    //MicroBitEvent evt1(CHANGE_PATH, CHANGE_PATH_EVT);
-    
-    while(1){
-    	forward();
-    	uBit.sleep(2000);
-    	reverse();
-    	uBit.sleep(2000);
-    	right();
-    	uBit.sleep(2000);
-    	left();
-    	uBit.sleep(2000);
-    }
-    setLED(LED::ALL, true);
-=======
     for (;;)
     {
         if (readLine(Line::LEFTSensor) == 1)
@@ -132,5 +193,10 @@ int main()
             setLED(LED::RIGHT, false);
         }
     }
->>>>>>> c7b3bd0efd7079ed18a606919c54359f66842f9b
+    uBit.messageBus.listen(uBit.io.P13.id, DEVICE_PIN_EVT_RISE, onLeftLineOn);
+    uBit.messageBus.listen(uBit.io.P13.id, DEVICE_PIN_EVT_FALL, onLeftLineOff);
+    uBit.messageBus.listen(uBit.io.P14.id, DEVICE_PIN_EVT_RISE, onRightLineOn);
+    uBit.messageBus.listen(uBit.io.P14.id, DEVICE_PIN_EVT_FALL, onRightLineOff);
+
+    release_fiber();
 }
