@@ -25,7 +25,6 @@ void setLED(LED led, bool on)
     }
 }
 
-<<<<<<< HEAD
 int  ret;  
 
 void displayStatus(char i){
@@ -56,60 +55,33 @@ void displayStatus(char i){
     }
 }
 
+//direction functions
 void forward(){
-    uint8_t buf[3]; 
-    buf[0] = 0x00;buf[1] = 0x00;buf[2] = 0x60; 
-    uBit.i2c.write( 0x20, buf, 3); 
-    buf[0] = 0x02;buf[1] = 0x00;buf[2] = 0x60; 
-    uBit.i2c.write( 0x20, buf, 3); 
+    uint8_t buf[3];//set both motors to forward
+    buf[0] = 0x00;buf[1] = 0x00;buf[2] = 0x60; uBit.i2c.write( 0x20, buf, 3); 
+    buf[0] = 0x02;buf[1] = 0x00;buf[2] = 0x60; uBit.i2c.write( 0x20, buf, 3); 
     displayStatus('f');
 }
-void reverse(){
+void reverse(){ //set both motors to reverse
     uint8_t buf[3]; 
-    buf[0] = 0x00;buf[1] = 0x01;buf[2] = 0x60; 
-    uBit.i2c.write( 0x20, buf, 3); 
-    buf[0] = 0x02;buf[1] = 0x01;buf[2] = 0x60; 
-    uBit.i2c.write( 0x20, buf, 3); 
+    buf[0] = 0x00;buf[1] = 0x01;buf[2] = 0x60; uBit.i2c.write( 0x20, buf, 3); 
+    buf[0] = 0x02;buf[1] = 0x01;buf[2] = 0x60; uBit.i2c.write( 0x20, buf, 3); 
     displayStatus('b');
 }
-void right(){
+void right(){ //set left motor on, right motor off
     uint8_t buf[3]; 
-    buf[0] = 0x00;buf[1] = 0x00;buf[2] = 0x40; 
-    uBit.i2c.write( 0x20, buf, 3); 
-    buf[0] = 0x02;buf[1] = 0x00;buf[2] = 0x00; 
-    uBit.i2c.write( 0x20, buf, 3); 
+    buf[0] = 0x00;buf[1] = 0x00;buf[2] = 0x40; uBit.i2c.write( 0x20, buf, 3); 
+    buf[0] = 0x02;buf[1] = 0x00;buf[2] = 0x00; uBit.i2c.write( 0x20, buf, 3); 
     displayStatus('r');
 }
-void left(){
+void left(){ //set right motor on, left motor off
     uint8_t buf[3]; 
-    buf[0] = 0x00;buf[1] = 0x00;buf[2] = 0x00; 
-    uBit.i2c.write( 0x20, buf, 3); 
-    buf[0] = 0x02;buf[1] = 0x00;buf[2] = 0x40; 
-    uBit.i2c.write( 0x20, buf, 3); 
+    buf[0] = 0x00;buf[1] = 0x00;buf[2] = 0x00; uBit.i2c.write( 0x20, buf, 3); 
+    buf[0] = 0x02;buf[1] = 0x00;buf[2] = 0x40; uBit.i2c.write( 0x20, buf, 3); 
     displayStatus('l');
 }
 
 
-=======
-enum Line
-{
-    LEFTSensor = 1,
-    RIGHTSensor = 2,
-};
-
-int readLine(Line line)
-{
-    if (line == Line::LEFTSensor)
-    {
-        return uBit.io.P13.getDigitalValue();
-    }
-    else if (line == Line::RIGHTSensor)
-    {
-        return uBit.io.P14.getDigitalValue();
-    }
-    return -1;
-}
->>>>>>> c7b3bd0efd7079ed18a606919c54359f66842f9b
 
 void registerLineEvent(Line line) {
     uBit.io.P13.setPull
@@ -119,7 +91,6 @@ int main()
 {
     uBit.init();
 
-<<<<<<< HEAD
     uint8_t buf[3]; 
     buf[0] = 0x00;//motor selection x02 right x00 left
     buf[1] = 0x00;//motor direction 0 forward,  1 backward
@@ -140,9 +111,7 @@ int main()
     	left();
     	uBit.sleep(2000);
     }
-=======
     setLED(LED::ALL, true);
->>>>>>> 8d4910d7183c8d9207eacf91e403f95b71f92517
 =======
     for (;;)
     {
