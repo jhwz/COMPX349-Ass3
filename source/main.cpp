@@ -185,12 +185,12 @@ void drive()
     else if (state.leftLS && !state.rightLS)
     {
         moveWheel(state.left, 24, state.forward);
-        moveWheel(state.right, 0, state.reverse);
+        moveWheel(state.right, 24, state.reverse);
     }
     else if (!state.leftLS && state.rightLS)
     {
         moveWheel(state.right, 24, state.forward);
-        moveWheel(state.left, 0, state.reverse);
+        moveWheel(state.left, 24, state.reverse);
     }
     else
     {
@@ -199,13 +199,11 @@ void drive()
             return;
 
         uBit.serial.printf("intersection detection\n\r");
-
         // try detect an intersection
         bool intersection = false;
         state.searching = true;
         const int speed = 28;
         const int sleep = 300;
-
         // go forward to test if its an intersection
         moveWheel(state.left, speed, state.forward);
         moveWheel(state.right, speed, state.forward);
