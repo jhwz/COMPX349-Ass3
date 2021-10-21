@@ -8,10 +8,10 @@ MicroBit uBit;
  */
 
 // If set will alternate directions at intersections, otherwise will go straight through
-#define INTERSECTION_ALTERNATE 1
+#define INTERSECTION_ALTERNATE 0
 
 // If set will enable the sonar in the robot
-#define USE_SONAR 0
+#define USE_SONAR 1
 
 /*
  * HARDWARE BASED FUNCTIONS
@@ -175,16 +175,17 @@ void drive()
         // go forward to test if its an intersection
         moveWheel(left, 24, forward);
         moveWheel(right, 24, forward);
-        uBit.sleep(350);
+        uBit.sleep(600);
 
         if (!readLine(LS_LEFT) || !readLine(LS_RIGHT))
         {
+#if INTERSECTION_ALTERNATE
             // We think this is an intersection, perform that logic
             moveWheel(left, 0, forward);
             moveWheel(right, 0, forward);
             uBit.sleep(2000);
 
-#if INTERSECTION_ALTERNATE
+
             if (goRightAtIntersection)
             {
                 moveWheel(left, 30, forward);
@@ -195,13 +196,13 @@ void drive()
                 moveWheel(right, 30, forward);
                 moveWheel(left, 25, reverse);
             }
-            uBit.sleep(800);
+            uBit.sleep(850);
 
             // toggle the direction we choose
             goRightAtIntersection = !goRightAtIntersection;
 #else
-            moveWheel(left, speed, forward);
-            moveWheel(right, speed, forward);
+            moveWheel(left, 24, forward);
+            moveWheel(right, 24, forward);
 #endif
         }
         else
@@ -280,29 +281,37 @@ void onRightLineOff(MicroBitEvent evt)
 // gets called every 250ms
 void timerTick(MicroBitEvent)
 {
-    if (state != State::FOLLOW_LINE && state != State::STOPPED)
-        return;
-
     // read the ultrasonic sensor
     int d = readUlt();
 
     // only do something if a valid value was read, is negative if not able to determine
     if (d > 0)
     {
-        if (state == State::STOPPED && d >= 10)
+        // currently stopped and need to start again
+        if (state == State::STOPPED && d >= 10){
             state = State::FOLLOW_LINE;
+            drive();
+            return;
+        }
+            
 
+
+        // not stopped and the sensor detected an object 5 to 10 cm away. 
+        // just stop the robot and return. It should only get unstuck in this function.
         if (state != State::STOPPED && (5 <= d && d < 10))
         {
             moveWheel(WHEEL_LEFT, 0, WHEEL_FORWARD);
             moveWheel(WHEEL_RIGHT, 0, WHEEL_FORWARD);
             state = State::STOPPED;
+            return;
         }
 
+        // if not going backwards and the distance is less than 5 cm then switch the definitions and go backwards
         if (forward != (d < 5 ? WHEEL_BACKWARD : WHEEL_FORWARD))
         {
-            if (state == State::STOPPED)
-                state = State::FOLLOW_LINE;
+            // set the state to follow the line - will do so backwards
+            state = State::FOLLOW_LINE;
+
 
             if (d < 5)
             {
@@ -318,6 +327,7 @@ void timerTick(MicroBitEvent)
                 left = WHEEL_LEFT;
                 right = WHEEL_RIGHT;
             }
+            drive();
         }
     }
 }
