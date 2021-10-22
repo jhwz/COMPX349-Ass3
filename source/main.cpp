@@ -110,6 +110,11 @@ enum State
 
 // current state of the robot
 State state = FOLLOW_LINE;
+
+// if an event fires while another routine is performing intersection
+// logic, then we don't want to interrupt it. This flag can be set to
+// say 'something changed', and once the other routine is done it will know to
+// recompute the driving logic
 bool recompute = false;
 
 // current values of the line sensors. These are updated by the
@@ -119,15 +124,14 @@ int8_t rightLS = 0;
 
 // level of abstraction on what the robot thinks the directions are.
 // allows us to modify these values to make the robot go backwards instead
-// of forward for example
+// of forward. Did this as a little gimmick with the ultrasonic sensor
 WheelDirection forward = WHEEL_FORWARD;
 WheelDirection reverse = WHEEL_BACKWARD;
 Wheel left = WHEEL_LEFT;
 Wheel right = WHEEL_RIGHT;
 
-// if true, goes right at an intersection. Otherwise it goes left.
-// only need this value if doing the intersection logic
 #if INTERSECTION_ALTERNATE
+// if true, goes right at an intersection. Otherwise it goes left.
 bool goRightAtIntersection = false;
 #endif
 
@@ -151,6 +155,7 @@ void drive()
         recompute = true;
         return;
     }
+    // Set computing flag
     state = State::COMPUTING;
 
     if (!leftLS && !rightLS)
@@ -162,43 +167,43 @@ void drive()
     else if (leftLS && !rightLS)
     {
         moveWheel(left, ADJUST_SPEED, forward);
-        moveWheel(right, ADJUST_SPEED, reverse);
+        moveWheel(right, 0, reverse);
     }
     else if (!leftLS && rightLS)
     {
         moveWheel(right, ADJUST_SPEED, forward);
-        moveWheel(left, ADJUST_SPEED, reverse);
+        moveWheel(left, 0, reverse);
     }
     else
     {
-
-        // go forward to test if its an intersection
+        // Have hit double white
+        //
+        // Go forward to test if its an intersection
         moveWheel(left, 24, forward);
         moveWheel(right, 24, forward);
         uBit.sleep(600);
 
         if (!readLine(LS_LEFT) || !readLine(LS_RIGHT))
         {
-#if INTERSECTION_ALTERNATE
             // We think this is an intersection, perform that logic
-            moveWheel(left, 0, forward);
-            moveWheel(right, 0, forward);
-            uBit.sleep(2000);
 
-
+#if INTERSECTION_ALTERNATE
+            // shifts the robot left or right and then give it time to turn before
+            // going back to the normal drive routine. Set the forward values slightly higher
+            // to send the robot forward a bit, off the intersection.
             if (goRightAtIntersection)
             {
-                moveWheel(left, 30, forward);
-                moveWheel(right, 25, reverse);
+                moveWheel(left, 25, forward);
+                moveWheel(right, 20, reverse);
             }
             else
             {
-                moveWheel(right, 30, forward);
-                moveWheel(left, 25, reverse);
+                moveWheel(right, 25, forward);
+                moveWheel(left, 20, reverse);
             }
-            uBit.sleep(850);
+            uBit.sleep(1300);
 
-            // toggle the direction we choose
+            // toggle the direction
             goRightAtIntersection = !goRightAtIntersection;
 #else
             moveWheel(left, 24, forward);
@@ -210,7 +215,8 @@ void drive()
             // This isn't an intersection, try treat it as a sharp corner
 
             // Move back to the line, we moved forward just before to test if this was an
-            // intersection. I found it works best to not move all the way back
+            // intersection. I found it works best to not move all the way back, hence the lower
+            // speed.
             moveWheel(left, 24, reverse);
             moveWheel(right, 24, reverse);
             uBit.sleep(200);
@@ -222,7 +228,7 @@ void drive()
             uBit.sleep(700);
 
             // maybe sample a few times over the time period so we can check if we passed over the
-            // line?
+            // line? not currently necessary
 
             // if both line sensors are true then we aren't on a line, move back
             // this will leave the robot in the turning state so worst case, it
@@ -288,15 +294,14 @@ void timerTick(MicroBitEvent)
     if (d > 0)
     {
         // currently stopped and need to start again
-        if (state == State::STOPPED && d >= 10){
+        if (state == State::STOPPED && d >= 10)
+        {
             state = State::FOLLOW_LINE;
             drive();
             return;
         }
-            
 
-
-        // not stopped and the sensor detected an object 5 to 10 cm away. 
+        // not stopped and the sensor detected an object 5 to 10 cm away.
         // just stop the robot and return. It should only get unstuck in this function.
         if (state != State::STOPPED && (5 <= d && d < 10))
         {
@@ -306,12 +311,12 @@ void timerTick(MicroBitEvent)
             return;
         }
 
-        // if not going backwards and the distance is less than 5 cm then switch the definitions and go backwards
+        // if not going backwards and the distance is less than 5 cm then switch the definitions and
+        // go backwards
         if (forward != (d < 5 ? WHEEL_BACKWARD : WHEEL_FORWARD))
         {
             // set the state to follow the line - will do so backwards
             state = State::FOLLOW_LINE;
-
 
             if (d < 5)
             {
